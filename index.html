@@ -1,0 +1,670 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Still Down?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Figtree:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+/* Layout: one phone-width column of chunky sticker cards over a floating doodle sky.
+   Boldness lives in the display type + offset-shadow cards; everything else stays calm. */
+:root {
+  --bg: #f3ebff;
+  --card: #ffffff;
+  --text: #231942;
+  --line: #231942;
+  --muted: #6d6490;
+  --pink: #ff9ccf;
+  --lime: #c9f26b;
+  --sun: #ffd94d;
+  --sky: #98d8ff;
+  --good: #b9f28c;
+  --bad: #ff9aa8;
+  --on-pop: #231942;
+  --doodle: #b9a4f0;
+  --display: "Bagel Fat One", "Arial Rounded MT Bold", system-ui, sans-serif;
+  --body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1a1331; --card: #2a2150; --text: #f6f0ff; --line: #0c0720; --muted: #b3a8d9; --doodle: #4a3d86;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1a1331; --card: #2a2150; --text: #f6f0ff; --line: #0c0720; --muted: #b3a8d9; --doodle: #4a3d86;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { min-height: 100%; }
+body {
+  background: var(--bg); color: var(--text); font-family: var(--body); font-size: 16px; line-height: 1.4;
+  padding-inline: 16px; padding-block: 20px 48px; overflow-x: hidden; -webkit-tap-highlight-color: transparent;
+}
+#doodles { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+#doodles svg { position: absolute; color: var(--doodle); animation: bob 6s ease-in-out infinite; }
+@keyframes bob { 0%,100% { transform: translateY(0) rotate(var(--r)); } 50% { transform: translateY(-10px) rotate(calc(var(--r) + 8deg)); } }
+#app { position: relative; z-index: 1; max-width: 440px; margin-inline: auto; }
+.screen { display: flex; flex-direction: column; gap: 16px; animation: pop .35s cubic-bezier(.2,1.4,.4,1); }
+@keyframes pop { from { opacity: 0; transform: translateY(14px) scale(.96); } to { opacity: 1; transform: none; } }
+
+h1, h2, h3 { font-family: var(--display); font-weight: 400; margin: 0; text-wrap: balance; letter-spacing: .01em; }
+p { margin: 0; }
+.card { background: var(--card); border: 3px solid var(--line); border-radius: 24px; box-shadow: 0 6px 0 var(--line); padding: 18px; min-width: 0; }
+.center { text-align: center; align-items: center; }
+
+/* logo */
+.logo { display: flex; flex-direction: column; align-items: center; gap: 0; margin-top: 4px; }
+.logo .l1, .logo .l2 { font-family: var(--display); line-height: .9; text-shadow: 0 5px 0 var(--line); -webkit-text-stroke: 3px var(--line); paint-order: stroke fill; }
+.logo .l1 { font-size: clamp(64px, 22vw, 92px); color: var(--pink); transform: rotate(-4deg); }
+.logo .l2 { font-size: clamp(64px, 22vw, 92px); color: var(--lime); transform: rotate(3deg); margin-top: -6px; }
+.sticker { position: absolute; font-family: var(--display); font-size: 15px; background: var(--sun); color: var(--on-pop); border: 3px solid var(--line); border-radius: 999px; padding: 4px 12px; transform: rotate(8deg); box-shadow: 0 3px 0 var(--line); }
+.hero { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.hero .sticker { right: 0; top: 6px; }
+.hero .mascot { margin-top: 4px; }
+.tagline { font-size: 19px; font-weight: 800; text-align: center; text-wrap: balance; }
+
+/* buttons */
+.btn { font: inherit; font-family: var(--display); font-size: 20px; color: var(--on-pop); background: var(--pink); border: 3px solid var(--line); border-radius: 18px; padding: 14px 18px; box-shadow: 0 6px 0 var(--line); cursor: pointer; width: 100%; transition: transform .08s, box-shadow .08s; text-wrap: balance; }
+.btn:hover { transform: translateY(-2px); box-shadow: 0 8px 0 var(--line); }
+.btn:active { transform: translateY(5px); box-shadow: 0 1px 0 var(--line); }
+.btn:focus-visible, .opt:focus-visible, input:focus-visible { outline: 4px solid var(--sky); outline-offset: 3px; }
+.btn.lime { background: var(--lime); }
+.btn.sun { background: var(--sun); }
+.btn.sky { background: var(--sky); }
+.btn.big { font-size: 24px; padding: 18px; }
+.btn.ghost { background: var(--card); color: var(--text); }
+.btn[disabled] { opacity: .5; pointer-events: none; }
+.wiggle { animation: wig 2.4s ease-in-out infinite; }
+@keyframes wig { 0%,88%,100% { transform: rotate(0); } 90% { transform: rotate(-2deg); } 94% { transform: rotate(2deg); } 97% { transform: rotate(-1deg); } }
+
+/* steps */
+.steps { display: grid; gap: 12px; padding: 0; margin: 0; list-style: none; }
+.steps li { display: flex; gap: 12px; align-items: center; font-weight: 700; }
+.steps .n { flex: none; width: 38px; height: 38px; border-radius: 50%; border: 3px solid var(--line); display: grid; place-items: center; font-family: var(--display); color: var(--on-pop); }
+.steps li:nth-child(1) .n { background: var(--sun); }
+.steps li:nth-child(2) .n { background: var(--sky); }
+.steps li:nth-child(3) .n { background: var(--pink); }
+.fine { font-size: 13px; color: var(--muted); text-align: center; font-weight: 500; }
+
+/* inputs */
+label.lab { font-weight: 800; font-size: 14px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+input[type=text] { font: inherit; font-size: 22px; font-weight: 800; width: 100%; background: var(--bg); color: var(--text); border: 3px solid var(--line); border-radius: 16px; padding: 14px 16px; }
+input[type=text]::placeholder { color: var(--muted); opacity: .7; }
+
+/* quiz */
+.topbar { display: flex; align-items: center; gap: 10px; justify-content: space-between; }
+.pips { display: flex; gap: 5px; flex: 1; min-width: 0; }
+.pip { flex: 1; height: 12px; border-radius: 99px; border: 2.5px solid var(--line); background: var(--card); transition: background .2s; }
+.pip.now { background: var(--sun); }
+.pip.ok { background: var(--good); }
+.pip.no { background: var(--bad); }
+.pip.set { background: var(--sky); }
+.count { font-family: var(--display); font-size: 16px; white-space: nowrap; }
+.chip { align-self: flex-start; font-weight: 800; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; background: var(--lime); color: var(--on-pop); border: 2.5px solid var(--line); border-radius: 99px; padding: 4px 12px; }
+.chip.pk { background: var(--pink); }
+.q { font-family: var(--display); font-size: clamp(24px, 7.2vw, 30px); line-height: 1.15; text-wrap: balance; }
+.opts { display: grid; gap: 12px; }
+.opt { font: inherit; font-weight: 700; font-size: 16.5px; text-align: left; color: var(--text); background: var(--card); border: 3px solid var(--line); border-radius: 20px; box-shadow: 0 5px 0 var(--line); padding: 12px 14px; display: flex; gap: 12px; align-items: center; cursor: pointer; transition: transform .08s, box-shadow .08s, background .15s, opacity .2s; min-width: 0; }
+.opt span.t { min-width: 0; overflow-wrap: anywhere; }
+.opt .k { flex: none; width: 34px; height: 34px; border-radius: 12px; border: 3px solid var(--line); display: grid; place-items: center; font-family: var(--display); color: var(--on-pop); }
+.opt:nth-child(1) .k { background: var(--sun); }
+.opt:nth-child(2) .k { background: var(--sky); }
+.opt:nth-child(3) .k { background: var(--pink); }
+.opt:nth-child(4) .k { background: var(--lime); }
+.opt:hover { transform: translateY(-2px); box-shadow: 0 7px 0 var(--line); }
+.opt:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--line); }
+.opts.done .opt { pointer-events: none; opacity: .5; transform: none; box-shadow: 0 3px 0 var(--line); }
+.opts.done .opt.real { opacity: 1; background: var(--good); color: var(--on-pop); animation: boing .5s cubic-bezier(.2,1.6,.4,1); }
+.opts.done .opt.miss { opacity: 1; background: var(--bad); color: var(--on-pop); animation: shake .45s; }
+.opts.done .opt.mine { opacity: 1; background: var(--sun); color: var(--on-pop); animation: boing .4s; }
+.opt .tag { margin-left: auto; flex: none; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; border: 2.5px solid var(--line); background: var(--card); color: var(--text); border-radius: 99px; padding: 2px 8px; }
+@keyframes boing { 0% { transform: scale(.94); } 60% { transform: scale(1.04); } 100% { transform: scale(1); } }
+@keyframes shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-8px); } 40% { transform: translateX(8px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(5px); } }
+
+.reveal { display: flex; flex-direction: column; gap: 12px; animation: pop .35s cubic-bezier(.2,1.4,.4,1); }
+.react { display: flex; gap: 12px; align-items: center; }
+.react .mascot { flex: none; }
+.bubble { position: relative; flex: 1; min-width: 0; background: var(--card); border: 3px solid var(--line); border-radius: 20px; padding: 10px 14px; box-shadow: 0 4px 0 var(--line); }
+.bubble b { font-family: var(--display); font-weight: 400; font-size: 22px; line-height: 1.1; display: block; text-wrap: balance; }
+.bubble small { display: block; margin-top: 4px; font-size: 14px; font-weight: 600; color: var(--muted); overflow-wrap: anywhere; }
+
+/* result */
+.score { font-family: var(--display); font-size: clamp(80px, 28vw, 120px); line-height: .95; color: var(--pink); -webkit-text-stroke: 3px var(--line); paint-order: stroke fill; text-shadow: 0 6px 0 var(--line); }
+.score small { font-size: .4em; color: var(--lime); }
+.title { font-size: clamp(28px, 8.5vw, 38px); line-height: 1.05; }
+.blurb { font-weight: 600; font-size: 17px; text-wrap: balance; }
+.linkbox { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13px; background: var(--bg); border: 3px dashed var(--line); border-radius: 14px; padding: 10px 12px; word-break: break-all; user-select: all; -webkit-user-select: all; text-align: left; width: 100%; }
+.stack { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+
+.mascot { display: block; overflow: visible; }
+.mascot.float { animation: floaty 3s ease-in-out infinite; }
+@keyframes floaty { 0%,100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-8px) rotate(3deg); } }
+
+#fx { position: fixed; inset: 0; pointer-events: none; z-index: 5; overflow: hidden; }
+#fx i { position: absolute; font-style: normal; font-size: 28px; animation: fly 1.3s ease-out forwards; }
+@keyframes fly { 0% { transform: translate(0,0) scale(.4) rotate(0); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(1.2) rotate(var(--dr)); opacity: 0; } }
+.langbar { position: relative; z-index: 2; max-width: 440px; margin: 0 auto 12px; display: flex; justify-content: flex-end; }
+.lang { display: inline-flex; border: 3px solid var(--line); border-radius: 99px; background: var(--card); box-shadow: 0 3px 0 var(--line); overflow: hidden; }
+.lang button { font: inherit; font-weight: 800; font-size: 13px; color: var(--text); background: transparent; border: 0; padding: 6px 12px; cursor: pointer; }
+.lang button[aria-pressed="true"] { background: var(--sun); color: var(--on-pop); }
+.lang button:focus-visible { outline: 3px solid var(--sky); outline-offset: -3px; }
+#toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 30px); background: var(--text); color: var(--bg); font-weight: 800; padding: 10px 18px; border-radius: 99px; opacity: 0; transition: .25s; z-index: 6; pointer-events: none; max-width: calc(100% - 32px); text-align: center; }
+#toast.on { opacity: 1; transform: translate(-50%, 0); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+
+<div id="doodles" aria-hidden="true"></div>
+<div id="fx" aria-hidden="true"></div>
+<div class="langbar"><div class="lang" role="group" aria-label="Language"><button type="button" data-lang="tu" aria-pressed="true">Tulu</button><button type="button" data-lang="en" aria-pressed="false">English</button></div></div>
+<main id="app"></main>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* =====================================================================
+     TEXT. Everything people read lives here. Two languages:
+       en = English, tu = Tulu written in English letters (Tulu-English mix).
+     In questions: {N} = you / the name, {NS} = your / the name's, {V} = verb ending.
+     Edit the "tu" blocks to fix any Tulu wording.
+     ===================================================================== */
+  var T = {
+    en: {
+      sticker: "no cap",
+      tagline: "Let’s see if your friends are still down after this",
+      create: "Create My Unhinged Quiz",
+      how: "How it works",
+      s1: "Answer 10 deeply unwell questions about yourself. Honestly.",
+      s2: "Drop your link in the group chat.",
+      s3: "Watch your friends get exposed, one reveal at a time.",
+      fine: "No sign-up. Nothing is stored. Your answers travel inside the link.",
+      whoH: "First, who are you?",
+      whoLab: "Your name (or your government alias)",
+      whoPh: "e.g. Aanya",
+      whoGo: "Let’s get unhinged",
+      back: "Back",
+      noName: "Even your enemies have a name",
+      chipC: "Answer for real, no lying",
+      chipP: function (n) { return "Guessing for " + n; },
+      lock: ["Locked in 🔒 (your friends will pay)", "Wow. Noted. 👀", "Okay that’s so you", "Your secrets are safe… in the link", "Honestly? Fair.", "Unhinged choice. Love it."],
+      ok: ["Nah they actually said this 😭", "Okay detective 🕵️", "Scary accurate", "Bestie behavior", "You KNOW them like that", "Locked in. Respect."],
+      no: ["You’re cooked 💀", "Respectfully wrong", "You thought…", "Who is this person to you??", "Blocked mentally 🚫", "Not even close, bestie", "Be so for real right now", "The audacity of that guess"],
+      subOk: function (n) { return n + " really picked that. Said it with their whole chest."; },
+      subNo: function (n, a) { return n + " really picked: “" + a + "”"; },
+      tagBoth: function (n) { return "You + " + n; },
+      tagYou: "You",
+      next: "Next",
+      fate: "See my fate",
+      doneH: "It’s done. You’re cooked.",
+      doneP: "Send this to people you’d like to humble.",
+      linkLab: "Your link",
+      copyLink: "Copy link + caption",
+      caption: function (n, l) { return "Think you know " + n + "? Prove you’re still down 👀 " + l; },
+      preview: "Take it myself (as a friend)",
+      again: "Make a new one",
+      warn: "Heads up: anyone with the link can see the answers if they decode it, so keep it for the group chat.",
+      introA: "Is ", introB: " still down for you?",
+      sticker2: "10 Qs",
+      introP: "Guess their real answers. You find out instantly if you’re wrong. Publicly.",
+      pnLab: "Your name", pnPh: "Who’s asking?",
+      pnGo: "Start the damage",
+      anon: "Anonymous Menace",
+      me: "Me (the creator)",
+      vs: function (a, b) { return a + " vs " + b; },
+      copyRes: "Copy my result", retry: "Run it back", own: "Make my own unhinged quiz",
+      resTxt: function (n, s, t, l) { return "I got " + s + "/10 on " + n + "’s Still Down? quiz: “" + t + "” 💀 Think you can do better? " + l; },
+      copied: "Copied! Now go cause problems 😈",
+      copiedRes: "Result copied. Go flex (or hide).",
+      longpress: "Long-press the link to copy it",
+      tiers: [
+        { min: 10, t: "Still Down 💅", mood: "proud", b: "Perfect score. You are the group chat’s emotional support animal. Legally inseparable." },
+        { min: 8, t: "Lowkey Still Down 😎", mood: "proud", b: "Almost scary. You pay attention. A little too much attention. We’re watching you." },
+        { min: 5, t: "On Thin Ice 🧊", mood: "think", b: "Half right, half hallucinating. The friendship is surviving on vibes and shared trauma." },
+        { min: 3, t: "Blocked Mentally 🚫", mood: "cooked", b: "They’ve been removed from your Close Friends in spirit. Please text them “you good?” immediately." },
+        { min: 1, t: "Fake Bestie Detected 🚨", mood: "cooked", b: "Hit rate this low is statistically impressive. Did you two ever actually talk?" },
+        { min: 0, t: "You Don’t Know Them At All 💀", mood: "cooked", b: "Zero. Not even by accident. Random guessing would have done better. Go touch grass and ask them a question." }
+      ],
+      you: "you", yours: "your", sufYou: "", sufName: "", poss: function (n) { return n + "’s"; },
+      Q: [
+        { q: "At 3AM, {N} would most likely be…", o: ["Googling “can ducks get depressed” and sending the answer to nobody", "Writing a 14-paragraph text to a guy from 2019 who was never even an ex", "Accepting a Grammy into a shampoo bottle", "Watching a 41-minute documentary on how spoons are made"] },
+        { q: "{NS} villain origin story begins when someone…", o: ["Takes the last fry and calls it “sharing”", "Says “we should hang out sometime” and then vanishes into witness protection", "Eats loudly on a voice note", "Replies “k.” to a full paragraph of emotional labor"] },
+        { q: "In a group project, {N} would be the one who…", o: ["Says “I’ll do it tonight” and is then unreachable in every timezone", "Makes a 47-slide deck about a topic nobody asked for", "Joins the call only to ask “can you guys hear me”", "Offers emotional support and zero completed tasks"] },
+        { q: "{NS} most illegal opinion is that…", o: ["Pineapple belongs on everything, including sushi and feelings", "Mayonnaise is a personality trait", "NPCs deserve legal representation", "The Moon is just Earth’s ex who refuses to leave"] },
+        { q: "{NS} secret talent is…", o: ["Fake-laughing in a language {N} does not speak", "Finding the one cockroach in a five-star hotel", "Falling asleep in 4 seconds during emotional conversations", "Predicting exactly who will cancel plans, and at what minute"] },
+        { q: "At the airport, {N} would fight…", o: ["One horse-sized duck", "A hundred duck-sized horses", "A goose who knows {NS} browsing history", "A pigeon holding a very specific grudge"] },
+        { q: "{NS} screen time report would legally require therapy because of…", o: ["7 hours of “satisfying soap cutting” videos", "The same 12-second clip of a man falling off a treadmill, rewatched 300 times", "Checking if the person {N} muted is still posting", "Typing, deleting and retyping “hey” 63 times"] },
+        { q: "In a zombie apocalypse, {N} would be the first to…", o: ["Trade the group’s last food for a Wi-Fi password", "Hide behind everyone and call it “strategy”", "Stop mid-chase to take a selfie with a zombie", "Give a zombie a nickname and cry when it dies"] },
+        { q: "{N} would get cancelled for…", o: ["A 2016 tweet that says “ngl this soup slaps”", "Rating friends’ cooking out of 10, out loud, at the table", "Saying “no thoughts, head empty” at a funeral", "Replying-all “lol same” to a company-wide email"] },
+        { q: "The real reason {N} is still down is…", o: ["Free snacks. That’s it. That’s the whole reason.", "Terrified of missing the drama", "Already way too deep to leave", "Emotionally attached to a group chat name from 2021"] }
+      ]
+    },
+
+    tu: {
+      sticker: "no cap",
+      tagline: "Ee quiz ayinaka ninna friends ippavu down ullarà enchi nodule",
+      create: "Yenna Unhinged Quiz Malpule",
+      how: "Engane aapundu",
+      s1: "Ninna bagge 10 pagal questions-g nijavu answer pandule.",
+      s2: "Ninna link-na group chat-dh bidule.",
+      s3: "Friends-na nijavu bayalaapuna, onji onji nodule.",
+      fine: "Sign-up ijji. Edu-la store aavuji. Ninna answers link-dalle ulla.",
+      whoH: "Modalu, nee yer?",
+      whoLab: "Ninna name",
+      whoPh: "Udaharane: Aanya",
+      whoGo: "Barle, unhinged aapule",
+      back: "Pinte",
+      noName: "Name ijji enchi aapundu?",
+      chipC: "Nijavu answer pandule, sullu pandad",
+      chipP: function (n) { return n + "-g guess malpule"; },
+      lock: ["Locked in 🔒 (friends-g kashta)", "Wow. Note aathi 👀", "Idu ninna lakshana", "Ninna secret link-dh safe ulla", "Nijavu? Sari.", "Unhinged choice. Mast ishta."],
+      ok: ["Aayen satya ee answer pande 😭", "Sari detective 🕵️", "Bhayankara sari", "Bestie vartane", "Nee aayena mast gottu", "Locked in. Respect."],
+      no: ["Nee cooked aathi 💀", "Kshame, tappu", "Nee ene yochane malpuna?", "Idu yer nee-g?", "Mentally block aathi 🚫", "Hattirada illa friend", "Seriousa pandu?", "Ee guess-da dhairya!"],
+      subOk: function (n) { return n + " idade pick malpundar. Dhairyadi pande."; },
+      subNo: function (n, a) { return n + " pick malpundar: “" + a + "”"; },
+      tagBoth: function (n) { return "Nee + " + n; },
+      tagYou: "Nee",
+      next: "Next",
+      fate: "Ninna gati nodule",
+      doneH: "Aayindu. Nee cooked.",
+      doneP: "Humble malpuna friends-g ee link-na bidule.",
+      linkLab: "Ninna link",
+      copyLink: "Link + caption copy malpule",
+      caption: function (n, l) { return n + "-na bagge ninkulu-g gottunda? Ippavu down ullarà enchi nodule 👀 " + l; },
+      preview: "Yan-e quiz malpuve (friend aagi)",
+      again: "Pudhu quiz malpule",
+      warn: "Gamana: link ulla yer-gula answers decode malpuye, so group chat-g matra bidule.",
+      introA: "", introB: " ninkulu-g ippavu down ullarà?",
+      sticker2: "10 Qs",
+      introP: "Aayena nijavu answers guess malpule. Tappu aadinaga appale kanapundu. Ellara munchi.",
+      pnLab: "Ninna name", pnPh: "Nee yer?",
+      pnGo: "Shuru malpule (damage)",
+      anon: "Yer-o Menace",
+      me: "Yan (creator)",
+      vs: function (a, b) { return a + " vs " + b; },
+      copyRes: "Ninna result copy malpule", retry: "Marala malpule", own: "Yenna unhinged quiz malpule",
+      resTxt: function (n, s, t, l) { return "Yan " + n + "-na Still Down? quiz-dh " + s + "/10 aadu: “" + t + "” 💀 Nee better malpere? " + l; },
+      copied: "Copy aayindu! Ippad gondala malpule 😈",
+      copiedRes: "Result copy aayindu. Flex malpule (athava dadpule).",
+      longpress: "Link-na long-press malpi copy malpule",
+      tiers: [
+        { min: 10, t: "Still Down 💅", mood: "proud", b: "Perfect score. Nee group chat-da emotional support animal. Legalaagi bere aavuji." },
+        { min: 8, t: "Lowkey Still Down 😎", mood: "proud", b: "Bhaya aapuna. Mast gamana kodundu. Yenk nodundu." },
+        { min: 5, t: "On Thin Ice 🧊", mood: "think", b: "Ardha sari, ardha kanasu. Friendship vibes-dh matra bodundu." },
+        { min: 3, t: "Blocked Mentally 🚫", mood: "cooked", b: "Close Friends-dh aatmada-dh nundu removed aayindu. “You good?” enchi text malpule." },
+        { min: 1, t: "Fake Bestie Detected 🚨", mood: "cooked", b: "Ee kammi score... mast achar. Ibbulu maatad uleraa?" },
+        { min: 0, t: "You Don’t Know Them At All 💀", mood: "cooked", b: "Zero. Random guess malpuna better. Grass touch malpi aayen onji question keluu." }
+      ],
+      you: "nee", yours: "ninna", sufYou: "ve", sufName: "var", poss: function (n) { return n + "na"; },
+      Q: [
+        { q: "Raatri 3 gante {N} ene malpu{V}?", o: ["“Duck-gulu depressed aapunda?” enchi Google malpudu, yer-g bhi pamparuji", "2019da oru boy-g 14 paragraph text barapudu (ex kuda alla)", "Shampoo bottle-da munchi Grammy award spiche koduni", "Spoon engane malpuna enchi 41 minute video noduni"] },
+        { q: "{NS} villain origin story shuru aapuna, yer…", o: ["Last fry ettundu “sharing” enchi pandina", "“Hang out malpule” enchi pandi mari ghost aadina", "Voice note-dh baay teriyatte tindina", "Mast paragraph-g “k.” matra reply malpina"] },
+        { q: "Group project-dh {N} ene malpu{V}?", o: ["“Raatri malpuve” enchi pandi mari yer-g kuda sigaduji", "Yer-kuda keladina topic-da 47 slides malpudu", "Call-dh bandi “keluthunda?” enchi matra pandudu", "Support matra kodudu, pani onji kuda malpuji"] },
+        { q: "{NS} mast illegal opinion ene?", o: ["Pineapple ellada mele undu, sushi, feelings kuda", "Mayonnaise onji personality trait", "NPC-gulag legal rights bodu", "Chandra Bhumida ex, bidu poguji"] },
+        { q: "{NS} secret talent ene?", o: ["Gottillada bhasheda joke-g sullu nagu", "5-star hotel-dh onji cockroach padu", "Emotional maatadinaga 4 second-dh nidre", "Yer plan cancel malpuver enchi munche gottu"] },
+        { q: "Airport-dh {N} yer-na fight malpu{V}?", o: ["Okka horse size duck", "100 duck size horses", "{NS} browsing history gottulla goose", "Grudge ulla pigeon"] },
+        { q: "{NS} screen time report-dh therapy beku enchi pandunu, karana…", o: ["7 gante “satisfying soap cutting” videos", "Treadmill-dh bidina mandi 12-second clip, 300 sala", "Mute malpinavu ippavu post malpunda enchi nodudu", "“hey” type malpi delete malpi 63 sala"] },
+        { q: "Zombie apocalypse-dh {N} modalu ene malpu{V}?", o: ["Last khana bale Wi-Fi password-g vyapara", "Ellara pinte adaguthudu “strategy” enchi pandu", "Odudu nidhirdi zombie-nodu selfie", "Zombie-g nickname koduthu sattaga alu"] },
+        { q: "{N} ene-g cancel aapu{V}?", o: ["2016 tweet: “ngl ee soup slaps”", "Table-dh friends-da adige-g 10-dh rating koduni", "Funeral-dh “no thoughts, head empty” pandini", "Company mail-g “lol same” reply-all malpini"] },
+        { q: "{N} ippavu down ulluna asli karana…", o: ["Free snacks. Adu matra.", "Drama miss aapuvude bhaya", "Mast deep poyi, bidu pere", "2021da group chat name-g emotional attachment"] }
+      ]
+    }
+  };
+
+  var L = "tu";
+  try { var saved = localStorage.getItem("sd_lang"); if (saved === "en" || saved === "tu") L = saved; } catch (e) {}
+  function X() { return T[L]; }
+
+  var $app = document.getElementById("app");
+  var $toast = document.getElementById("toast");
+  var $fx = document.getElementById("fx");
+  var LET = ["A", "B", "C", "D"];
+
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+  function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+  function fill(s, you, name) {
+    var x = X();
+    var out = s.replace(/\{NS\}/g, you ? x.yours : x.poss(name))
+      .replace(/\{N\}/g, you ? x.you : name)
+      .replace(/\{V\}/g, you ? x.sufYou : x.sufName);
+    return cap(out);
+  }
+  function toast(msg) {
+    $toast.textContent = msg; $toast.classList.add("on");
+    clearTimeout(toast._t); toast._t = setTimeout(function () { $toast.classList.remove("on"); }, 1700);
+  }
+  function burst(emojis, n) {
+    for (var i = 0; i < n; i++) {
+      var el = document.createElement("i");
+      el.textContent = pick(emojis);
+      el.style.left = (30 + Math.random() * 40) + "%";
+      el.style.top = (45 + Math.random() * 15) + "%";
+      el.style.setProperty("--dx", (Math.random() * 260 - 130) + "px");
+      el.style.setProperty("--dy", (-120 - Math.random() * 220) + "px");
+      el.style.setProperty("--dr", (Math.random() * 360 - 180) + "deg");
+      $fx.appendChild(el);
+      (function (e) { setTimeout(function () { e.remove(); }, 1400); })(el);
+    }
+  }
+
+  /* ---------- quiz <-> link code (no server: answers ride in the link) ---------- */
+  function encodeQuiz(name, ans) {
+    var b = btoa(unescape(encodeURIComponent(name))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    var d = ans.map(function (a, i) { return (a + i * 3 + name.length) % 4; }).join("");
+    return b + "." + d;
+  }
+  function decodeQuiz(tok) {
+    try {
+      var m = /^([A-Za-z0-9_-]+)\.([0-3]{10})$/.exec(tok);
+      if (!m) return null;
+      var b = m[1].replace(/-/g, "+").replace(/_/g, "/"); while (b.length % 4) b += "=";
+      var name = decodeURIComponent(escape(atob(b))).slice(0, 24);
+      if (!name.trim()) return null;
+      var ans = m[2].split("").map(function (c, i) { return ((+c - i * 3 - name.length) % 4 + 4) % 4; });
+      return { name: name, ans: ans };
+    } catch (e) { return null; }
+  }
+  function shareLink(tok) { return location.href.split("#")[0] + "#" + tok; }
+  function copy(text, okMsg) {
+    var done = function () { toast(okMsg || X().copied); };
+    var fallback = function () {
+      var box = document.getElementById("linkbox");
+      if (box) { var r = document.createRange(); r.selectNodeContents(box); var s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+      toast(X().longpress);
+    };
+    try { navigator.clipboard.writeText(text).then(done, fallback); } catch (e) { fallback(); }
+  }
+
+  /* ---------- art ---------- */
+  function mascot(mood, color, size) {
+    var eyes, mouth, extra = "";
+    var ink = "#231942";
+    if (mood === "shook") {
+      eyes = '<circle cx="44" cy="52" r="11" fill="#fff" stroke="' + ink + '" stroke-width="3"/><circle cx="76" cy="52" r="11" fill="#fff" stroke="' + ink + '" stroke-width="3"/><circle cx="44" cy="52" r="3.5" fill="' + ink + '"/><circle cx="76" cy="52" r="3.5" fill="' + ink + '"/>';
+      mouth = '<ellipse cx="60" cy="81" rx="8" ry="10" fill="' + ink + '"/>';
+      extra = '<path d="M100 28 q6 10 0 14 q-6 -4 0 -14z" fill="#98d8ff" stroke="' + ink + '" stroke-width="2.5"/>';
+    } else if (mood === "cooked") {
+      eyes = '<path d="M36 44 l16 16 M52 44 l-16 16 M68 44 l16 16 M84 44 l-16 16" stroke="' + ink + '" stroke-width="5" stroke-linecap="round"/>';
+      mouth = '<path d="M42 80 q9 -8 18 0 t18 0" fill="none" stroke="' + ink + '" stroke-width="4.5" stroke-linecap="round"/><path d="M62 82 q3 14 10 8 q2 -6 -2 -8z" fill="#ff7fb0" stroke="' + ink + '" stroke-width="2.5"/>';
+      extra = '<path d="M20 20 q-6 -10 2 -16 q2 8 8 8 q-2 8 -10 8z" fill="#ffb347" stroke="' + ink + '" stroke-width="2.5"/>';
+    } else if (mood === "proud") {
+      eyes = '<path d="M33 56 q11 -14 22 0 M65 56 q11 -14 22 0" fill="none" stroke="' + ink + '" stroke-width="5" stroke-linecap="round"/>';
+      mouth = '<path d="M40 72 q20 24 40 0z" fill="' + ink + '" stroke="' + ink + '" stroke-width="3" stroke-linejoin="round"/><path d="M50 80 q10 8 20 0 q-10 -4 -20 0z" fill="#ff7fb0"/>';
+      extra = '<ellipse cx="30" cy="70" rx="7" ry="4.5" fill="#ff7fb0" opacity=".7"/><ellipse cx="90" cy="70" rx="7" ry="4.5" fill="#ff7fb0" opacity=".7"/>';
+    } else if (mood === "think") {
+      eyes = '<circle cx="44" cy="54" r="10" fill="#fff" stroke="' + ink + '" stroke-width="3"/><circle cx="76" cy="54" r="10" fill="#fff" stroke="' + ink + '" stroke-width="3"/><circle cx="48" cy="52" r="4" fill="' + ink + '"/><circle cx="80" cy="52" r="4" fill="' + ink + '"/><path d="M60 36 l22 -6" stroke="' + ink + '" stroke-width="4" stroke-linecap="round"/>';
+      mouth = '<path d="M46 82 q14 -6 28 2" fill="none" stroke="' + ink + '" stroke-width="4.5" stroke-linecap="round"/>';
+    } else {
+      eyes = '<circle cx="44" cy="54" r="10" fill="#fff" stroke="' + ink + '" stroke-width="3"/><circle cx="76" cy="54" r="10" fill="#fff" stroke="' + ink + '" stroke-width="3"/><circle cx="46" cy="55" r="4.5" fill="' + ink + '"/><circle cx="78" cy="55" r="4.5" fill="' + ink + '"/>';
+      mouth = '<path d="M46 76 q14 14 28 0" fill="none" stroke="' + ink + '" stroke-width="4.5" stroke-linecap="round"/>';
+      extra = '<ellipse cx="30" cy="70" rx="6" ry="4" fill="#ff7fb0" opacity=".6"/><ellipse cx="90" cy="70" rx="6" ry="4" fill="#ff7fb0" opacity=".6"/>';
+    }
+    return '<svg class="mascot" width="' + size + '" height="' + size + '" viewBox="0 0 120 120" aria-hidden="true">' +
+      '<path d="M44 108 v8 M76 108 v8" stroke="' + ink + '" stroke-width="5" stroke-linecap="round"/>' +
+      '<path d="M60 10 C90 6 114 28 112 62 C110 94 88 110 60 110 C30 110 8 94 8 60 C8 30 30 12 60 10Z" fill="' + color + '" stroke="' + ink + '" stroke-width="4"/>' +
+      '<path d="M40 18 q-6 -12 -16 -10 M80 18 q6 -12 16 -10" fill="none" stroke="' + ink + '" stroke-width="4" stroke-linecap="round"/>' +
+      eyes + mouth + extra + '</svg>';
+  }
+  function floaty(svg) { return svg.replace('class="mascot"', 'class="mascot float"'); }
+
+  function buildDoodles() {
+    var shapes = {
+      star: '<path d="M20 3 L25 15 L38 16 L28 25 L31 38 L20 31 L9 38 L12 25 L2 16 L15 15Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>',
+      squig: '<path d="M3 20 q8 -16 16 0 t16 0 t16 0" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>',
+      heart: '<path d="M20 35 C2 22 4 8 14 8 C18 8 20 11 20 13 C20 11 22 8 26 8 C36 8 38 22 20 35Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>',
+      bolt: '<path d="M24 2 L8 22 H19 L15 38 L33 16 H21Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>',
+      plus: '<path d="M20 6 v28 M6 20 h28" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>',
+      eye: '<path d="M3 20 q17 -20 34 0 q-17 20 -34 0z" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="20" cy="20" r="5" fill="currentColor"/>',
+      ring: '<circle cx="20" cy="20" r="14" fill="none" stroke="currentColor" stroke-width="4" stroke-dasharray="5 6" stroke-linecap="round"/>'
+    };
+    var spec = [
+      ["star", 6, 6, 44, -10], ["squig", 70, 4, 64, 8], ["heart", 88, 20, 40, 14], ["bolt", 3, 28, 38, -6],
+      ["eye", 80, 40, 52, 6], ["plus", 8, 50, 30, 0], ["ring", 90, 62, 46, 0], ["star", 78, 78, 36, 12],
+      ["squig", 4, 72, 62, -12], ["heart", 14, 88, 36, -8], ["bolt", 62, 90, 36, 10], ["plus", 48, 96, 28, 0],
+      ["eye", 28, 14, 44, -8], ["ring", 50, 2, 38, 0]
+    ];
+    document.getElementById("doodles").innerHTML = spec.map(function (s, i) {
+      return '<svg viewBox="0 0 40 40" style="left:' + s[1] + '%;top:' + s[2] + '%;width:' + s[3] + 'px;height:' + s[3] + 'px;--r:' + s[4] + 'deg;animation-delay:-' + (i * 0.7) + 's">' + shapes[s[0]] + '</svg>';
+    }).join("");
+  }
+
+  /* ---------- state + views ---------- */
+  var S = { mode: "landing", name: "", ans: [], i: 0, pName: "", picks: [], busy: false, token: "" };
+
+  function show(html) { $app.innerHTML = '<div class="screen">' + html + '</div>'; window.scrollTo(0, 0); }
+
+  function landing() {
+    var x = X();
+    S.mode = "landing";
+    show(
+      '<div class="hero"><span class="sticker">' + esc(x.sticker) + '</span>' +
+        '<div class="logo"><span class="l1">Still</span><span class="l2">Down?</span></div>' +
+        floaty(mascot("hi", "var(--sky)", 110)) +
+      '</div>' +
+      '<p class="tagline">' + esc(x.tagline) + '</p>' +
+      '<button class="btn big wiggle" data-act="start-create">' + esc(x.create) + '</button>' +
+      '<div class="card"><h3 style="font-size:22px;margin-bottom:12px">' + esc(x.how) + '</h3><ol class="steps">' +
+        '<li><span class="n">1</span><span>' + esc(x.s1) + '</span></li>' +
+        '<li><span class="n">2</span><span>' + esc(x.s2) + '</span></li>' +
+        '<li><span class="n">3</span><span>' + esc(x.s3) + '</span></li>' +
+      '</ol></div>' +
+      '<p class="fine">' + esc(x.fine) + '</p>'
+    );
+  }
+
+  function createName() {
+    var x = X();
+    S.mode = "cname";
+    show(
+      '<div class="center" style="display:flex;flex-direction:column;align-items:center;gap:8px">' + mascot("hi", "var(--lime)", 96) +
+      '<h2 style="font-size:32px">' + esc(x.whoH) + '</h2></div>' +
+      '<div class="card" style="display:flex;flex-direction:column;gap:10px">' +
+        '<label class="lab" for="nm">' + esc(x.whoLab) + '</label>' +
+        '<input id="nm" type="text" maxlength="20" placeholder="' + esc(x.whoPh) + '" autocomplete="off" value="' + esc(S.name) + '">' +
+      '</div>' +
+      '<button class="btn" data-act="name-go" id="goBtn">' + esc(x.whoGo) + '</button>' +
+      '<button class="btn ghost" data-act="home" style="font-size:16px;padding:10px">' + esc(x.back) + '</button>'
+    );
+    var nm = document.getElementById("nm");
+    nm.addEventListener("keydown", function (e) { if (e.key === "Enter") nameGo(); });
+    setTimeout(function () { try { nm.focus(); } catch (e) {} }, 50);
+  }
+  function nameGo() {
+    var v = (document.getElementById("nm").value || "").trim();
+    if (!v) { toast(X().noName); return; }
+    S.name = v.slice(0, 20); S.ans = []; S.i = 0; S.busy = false;
+    question();
+  }
+
+  function pips(statuses, now) {
+    var h = "";
+    for (var k = 0; k < 10; k++) h += '<span class="pip ' + (statuses[k] || (k === now ? "now" : "")) + '"></span>';
+    return h;
+  }
+
+  function question() {
+    var x = X();
+    var creator = S.mode === "cname" || S.mode === "create";
+    S.mode = creator ? "create" : "play";
+    var Q = x.Q[S.i];
+    var statuses = [];
+    for (var k = 0; k < S.i; k++) statuses[k] = creator ? "set" : (S.picks[k] === S.ans[k] ? "ok" : "no");
+    var chip = creator
+      ? '<span class="chip">' + esc(x.chipC) + '</span>'
+      : '<span class="chip pk">' + esc(x.chipP(S.name)) + '</span>';
+    var opts = Q.o.map(function (t, n) {
+      return '<button class="opt" data-act="opt" data-n="' + n + '"><span class="k">' + LET[n] + '</span><span class="t">' + esc(fill(t, creator, S.name)) + '</span></button>';
+    }).join("");
+    show(
+      '<div class="topbar"><div class="pips">' + pips(statuses, S.i) + '</div><span class="count">' + (S.i + 1) + '/10</span></div>' +
+      chip +
+      '<div class="card"><h2 class="q">' + esc(fill(Q.q, creator, S.name)) + '</h2></div>' +
+      '<div class="opts" id="opts">' + opts + '</div>' +
+      '<div id="after"></div>'
+    );
+    S.busy = false;
+  }
+
+  function onOpt(n) {
+    if (S.busy) return;
+    S.busy = true;
+    var x = X();
+    var optsEl = document.getElementById("opts");
+    var btns = optsEl.querySelectorAll(".opt");
+    if (S.mode === "create") {
+      S.ans[S.i] = n;
+      btns[n].classList.add("real");
+      optsEl.classList.add("done");
+      toast(pick(x.lock));
+      setTimeout(function () { if (S.i < 9) { S.i++; question(); } else { finishCreate(); } }, 750);
+      return;
+    }
+    var real = S.ans[S.i];
+    var right = n === real;
+    S.picks[S.i] = n;
+    optsEl.classList.add("done");
+    btns[real].classList.add("real");
+    var tag = document.createElement("span"); tag.className = "tag";
+    if (right) {
+      tag.textContent = x.tagBoth(S.name);
+      btns[real].appendChild(tag);
+      burst(["🎉", "✨", "💅", "🔥", "😭"], 14);
+    } else {
+      btns[n].classList.add("miss");
+      var t1 = document.createElement("span"); t1.className = "tag"; t1.textContent = x.tagYou;
+      btns[n].appendChild(t1);
+      tag.textContent = S.name;
+      btns[real].appendChild(tag);
+      burst(["💀", "🚫", "🤡", "😬"], 8);
+    }
+    var last = S.i === 9;
+    var line = right ? pick(x.ok) : pick(x.no);
+    var sub = right ? x.subOk(S.name) : x.subNo(S.name, fill(x.Q[S.i].o[real], false, S.name));
+    document.getElementById("after").innerHTML =
+      '<div class="reveal"><div class="react">' + mascot(right ? "shook" : "cooked", right ? "var(--lime)" : "var(--pink)", 76) +
+      '<div class="bubble"><b>' + esc(line) + '</b><small>' + esc(sub) + '</small></div></div>' +
+      '<button class="btn ' + (right ? "lime" : "sun") + '" data-act="next">' + esc(last ? x.fate : x.next) + '</button></div>';
+    setTimeout(function () { var nb = document.querySelector('[data-act="next"]'); if (nb) { try { nb.scrollIntoView({ behavior: "smooth", block: "center" }); nb.focus({ preventScroll: true }); } catch (e) {} } }, 120);
+  }
+
+  function finishCreate() {
+    var x = X();
+    S.mode = "share";
+    S.token = encodeQuiz(S.name, S.ans);
+    var link = shareLink(S.token);
+    show(
+      '<div class="center" style="display:flex;flex-direction:column;align-items:center;gap:6px">' + mascot("proud", "var(--sun)", 100) +
+      '<h2 style="font-size:32px">' + esc(x.doneH) + '</h2>' +
+      '<p class="blurb">' + esc(x.doneP) + '</p></div>' +
+      '<div class="card stack"><label class="lab">' + esc(x.linkLab) + '</label><div class="linkbox" id="linkbox">' + esc(link) + '</div>' +
+      '<button class="btn" data-act="copy-link">' + esc(x.copyLink) + '</button></div>' +
+      '<button class="btn sky" data-act="preview">' + esc(x.preview) + '</button>' +
+      '<button class="btn ghost" data-act="again" style="font-size:16px;padding:10px">' + esc(x.again) + '</button>' +
+      '<p class="fine">' + esc(x.warn) + '</p>'
+    );
+  }
+
+  function playIntro() {
+    var x = X();
+    S.mode = "pintro";
+    show(
+      '<div class="hero" style="gap:6px"><span class="sticker">' + esc(x.sticker2) + '</span>' + floaty(mascot("think", "var(--pink)", 110)) + '</div>' +
+      '<h1 style="font-size:clamp(32px,10vw,44px);line-height:1.05;text-align:center">' + esc(x.introA) + '<span style="color:var(--pink);-webkit-text-stroke:2px var(--line);paint-order:stroke fill">' + esc(S.name) + '</span>' + esc(x.introB) + '</h1>' +
+      '<p class="blurb" style="text-align:center">' + esc(x.introP) + '</p>' +
+      '<div class="card" style="display:flex;flex-direction:column;gap:10px"><label class="lab" for="pn">' + esc(x.pnLab) + '</label>' +
+      '<input id="pn" type="text" maxlength="20" placeholder="' + esc(x.pnPh) + '" autocomplete="off" value="' + esc(S.pName) + '"></div>' +
+      '<button class="btn lime big" data-act="pstart">' + esc(x.pnGo) + '</button>'
+    );
+    document.getElementById("pn").addEventListener("keydown", function (e) { if (e.key === "Enter") pStart(); });
+  }
+  function pStart() {
+    var v = (document.getElementById("pn").value || "").trim();
+    S.pName = (v || X().anon).slice(0, 20);
+    S.i = 0; S.picks = []; S.busy = false; S.mode = "play";
+    question();
+  }
+
+  function result() {
+    var x = X();
+    S.mode = "result";
+    var score = 0, st = [];
+    for (var k = 0; k < 10; k++) { var ok = S.picks[k] === S.ans[k]; if (ok) score++; st[k] = ok ? "ok" : "no"; }
+    var tier = x.tiers.filter(function (t) { return score >= t.min; })[0];
+    S.score = score; S.tierIdx = x.tiers.indexOf(tier);
+    show(
+      '<div class="center" style="display:flex;flex-direction:column;align-items:center;gap:10px">' +
+      '<p style="font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-size:14px">' + esc(x.vs(S.pName, S.name)) + '</p>' +
+      '<div class="score">' + score + '<small>/10</small></div>' +
+      floaty(mascot(tier.mood, score >= 8 ? "var(--lime)" : score >= 5 ? "var(--sun)" : "var(--pink)", 96)) +
+      '<h2 class="title">' + esc(tier.t) + '</h2>' +
+      '<p class="blurb">' + esc(tier.b) + '</p></div>' +
+      '<div class="pips" style="width:100%">' + pips(st, -1) + '</div>' +
+      '<div class="stack">' +
+        '<button class="btn" data-act="copy-result">' + esc(x.copyRes) + '</button>' +
+        '<button class="btn sun" data-act="retry">' + esc(x.retry) + '</button>' +
+        '<button class="btn lime" data-act="start-create">' + esc(x.own) + '</button>' +
+      '</div>'
+    );
+    burst(score >= 5 ? ["🎉", "💅", "✨", "🫡"] : ["💀", "🚨", "🧊", "🤡"], 22);
+  }
+
+  /* ---------- events ---------- */
+  $app.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-act]"); if (!t) return;
+    var a = t.getAttribute("data-act");
+    var x = X();
+    if (a === "start-create") { if (location.hash) { try { history.replaceState(null, "", location.href.split("#")[0]); } catch (z) {} } S.name = ""; createName(); }
+    else if (a === "home") landing();
+    else if (a === "name-go") nameGo();
+    else if (a === "opt") onOpt(+t.getAttribute("data-n"));
+    else if (a === "next") { if (S.i < 9) { S.i++; S.busy = false; question(); } else result(); }
+    else if (a === "copy-link") copy(x.caption(S.name, shareLink(S.token)));
+    else if (a === "preview") { S.pName = x.me; S.i = 0; S.picks = []; S.mode = "play"; question(); }
+    else if (a === "again") { S.name = ""; createName(); }
+    else if (a === "pstart") pStart();
+    else if (a === "retry") { S.i = 0; S.picks = []; S.mode = "play"; question(); }
+    else if (a === "copy-result") copy(x.resTxt(S.name, S.score, x.tiers[S.tierIdx].t, shareLink(S.token || encodeQuiz(S.name, S.ans))), x.copiedRes);
+  });
+
+  /* language switch: re-draw the current screen in the other language */
+  function rerender() {
+    var m = S.mode;
+    if (m === "landing") landing();
+    else if (m === "cname") createName();
+    else if (m === "create") question();
+    else if (m === "share") finishCreate();
+    else if (m === "pintro") playIntro();
+    else if (m === "play") { S.picks.length = S.i; question(); }
+    else if (m === "result") result();
+  }
+  var langBtns = document.querySelectorAll(".lang button");
+  function syncLang() {
+    Array.prototype.forEach.call(langBtns, function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-lang") === L ? "true" : "false"); });
+    document.documentElement.setAttribute("lang", L === "en" ? "en" : "tcy-Latn");
+  }
+  Array.prototype.forEach.call(langBtns, function (b) {
+    b.addEventListener("click", function () {
+      var nl = b.getAttribute("data-lang");
+      if (nl === L) return;
+      L = nl; try { localStorage.setItem("sd_lang", L); } catch (e) {}
+      syncLang(); rerender();
+    });
+  });
+
+  function route() {
+    var tok = (location.hash || "").replace(/^#/, "");
+    var q = tok ? decodeQuiz(tok) : null;
+    if (q) { S.name = q.name; S.ans = q.ans; S.token = tok; S.pName = ""; playIntro(); }
+    else landing();
+  }
+  window.addEventListener("hashchange", route);
+
+  syncLang();
+  buildDoodles();
+  route();
+})();
+</script>
+
+</body></html>
